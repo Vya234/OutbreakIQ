@@ -2,12 +2,6 @@
 
 <div align="center">
 
-![OutbreakIQ Banner](https://img.shields.io/badge/Gemma%204%20Good%20Hackathon-2026-blue?style=for-the-badge)
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react)
-![Node.js](https://img.shields.io/badge/Backend-Express-339933?style=for-the-badge&logo=node.js)
-![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb)
-![Gemma](https://img.shields.io/badge/AI-Gemma%202%20via%20Ollama-4285F4?style=for-the-badge&logo=google)
-
 ### AI-powered GIS Disease Outbreak Intelligence Platform
 
 Visualize outbreak hotspots, analyze epidemiological trends, and interact with a Gemma-powered assistant grounded in real-time public health data.
