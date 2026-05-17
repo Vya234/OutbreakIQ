@@ -19,6 +19,7 @@ export async function chat(req, res) {
   const result = await generateWithGemma({
     userMessage: message.trim(),
     contextText,
+    outbreaks,
     mode: 'chat',
   });
 
@@ -59,6 +60,7 @@ export async function recommendations(req, res) {
   const result = await generateWithGemma({
     userMessage,
     contextText,
+    outbreaks,
     mode: 'recommendations',
   });
 

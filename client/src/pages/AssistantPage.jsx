@@ -45,10 +45,9 @@ export function AssistantPage() {
 
     try {
       const res = await aiApi.chat(msg, outbreakId || undefined);
-      const note = res.data.fallback ? '\n\n_(Offline fallback — start Ollama or configure Google AI.)_' : '';
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: res.data.reply + note, provider: res.data.provider },
+        { role: 'assistant', content: res.data.reply, provider: res.data.provider, fallback: res.data.fallback },
       ]);
     } catch (err) {
       setMessages((m) => [...m, { role: 'assistant', content: `Error: ${err.message}`, error: true }]);

@@ -60,11 +60,46 @@ async function callGoogleAI(prompt, config) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
 }
 
+const OFFLINE_BANNER = '**Offline mode** — Using outbreak records from the database. Start Ollama or configure Google AI for full Gemma responses.';
+
+function formatReportedAt(value) {
+  return new Date(value).toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function formatOutbreakSummary(outbreak) {
+  return `**${outbreak.disease}** — ${outbreak.location}
+- **Cases:** ${outbreak.cases}
+- **Severity:** ${outbreak.severity}
+- **Reported:** ${formatReportedAt(outbreak.reportedAt)}
+- **Details:** ${outbreak.description || 'No description available.'}`;
+}
+
+function summarizeOutbreaks(outbreaks) {
+  if (!outbreaks?.length) {
+    return 'No matching outbreak records found. Run `npm run seed` after starting MongoDB.';
+  }
+  if (outbreaks.length === 1) return formatOutbreakSummary(outbreaks[0]);
+  return outbreaks.map(formatOutbreakSummary).join('\n\n');
+}
+
+function isSummaryQuery(message) {
+  return /\b(summarize|summary|overview|brief|status of|tell me about|describe)\b/i.test(message);
+}
+
 /**
- * Offline fallback when AI is unreachable — still uses outbreak context.
+ * Offline fallback when AI is unreachable — concise, data-grounded answers.
  */
-function fallbackResponse(userMessage, contextText) {
+function fallbackResponse(userMessage, outbreaks = []) {
   const lower = userMessage.toLowerCase();
+  const dataSummary = summarizeOutbreaks(outbreaks);
+
+  if (isSummaryQuery(userMessage)) {
+    return `${dataSummary}\n\n${OFFLINE_BANNER}`;
+  }
 
   if (lower.includes('symptom') && lower.includes('dengue')) {
     return `**Dengue symptoms** (general medical knowledge):
@@ -72,19 +107,24 @@ function fallbackResponse(userMessage, contextText) {
 - Joint and muscle pain, nausea, rash
 - Warning signs: severe abdominal pain, persistent vomiting, bleeding
 
-**From current data:**\n${contextText || 'No outbreak records loaded. Connect MongoDB and seed data for localized insights.'}
+**From current data:**
+${dataSummary}
 
-*AI provider offline — enable Ollama or Google AI Studio for full Gemma responses.*`;
+${OFFLINE_BANNER}`;
   }
 
   if (lower.includes('high risk') || lower.includes('high-risk')) {
-    const high = (contextText.match(/\[HIGH\]/g) || []).length;
+    const highRecords = outbreaks.filter((o) => o.severity === 'high');
+    const highSummary = highRecords.length
+      ? summarizeOutbreaks(highRecords)
+      : 'No high-severity outbreaks in the matched records.';
+
     return `**High-risk assessment (from loaded data):**
-${contextText || 'No data available.'}
+${highSummary}
 
-${high ? `There are ${high} high-severity outbreak record(s) in context.` : 'Review the map for red (high severity) markers.'}
+${highRecords.length ? `${highRecords.length} high-severity outbreak record(s) in context.` : 'Review the map for red (high severity) markers.'}
 
-*Connect Gemma via Ollama (GEMMA_PROVIDER=ollama) for personalized analysis.*`;
+${OFFLINE_BANNER}`;
   }
 
   if (lower.includes('prevent') && lower.includes('malaria')) {
@@ -94,21 +134,27 @@ ${high ? `There are ${high} high-severity outbreak record(s) in context.` : 'Rev
 - Eliminate standing water near homes
 - Seek prophylaxis when traveling to endemic areas
 
-**Local context:**\n${contextText || 'Seed outbreak data for region-specific guidance.'}
+**Local context:**
+${dataSummary}
 
-*Gemma AI offline — responses are template-based.*`;
+${OFFLINE_BANNER}`;
   }
 
-  return `**OutbreakIQ (offline mode)**
+  if (outbreaks.length) {
+    return `**Answer (from outbreak data):**
 
-Your question: "${userMessage}"
-
-**Available outbreak context:**
-${contextText || 'No outbreak records in database. Run \`npm run seed\` after starting MongoDB.'}
+${dataSummary}
 
 **General guidance:** Follow WHO and local health department advisories. Vaccinate where available, practice hand hygiene, and report symptoms early.
 
-*Start Ollama with your Gemma model, or set GEMMA_PROVIDER=google and GEMMA_API_KEY for full AI answers.*`;
+${OFFLINE_BANNER}`;
+  }
+
+  return `No outbreak records in the database. Run \`npm run seed\` after starting MongoDB.
+
+**General guidance:** Follow WHO and local health department advisories.
+
+${OFFLINE_BANNER}`;
 }
 
 /**
@@ -138,7 +184,7 @@ Assistant:`;
 /**
  * Main entry: generate AI text from user message + context.
  */
-export async function generateWithGemma({ userMessage, contextText, mode = 'chat' }) {
+export async function generateWithGemma({ userMessage, contextText, outbreaks = [], mode = 'chat' }) {
   const prompt = buildPrompt({ userMessage, contextText, mode });
   const provider = (process.env.GEMMA_PROVIDER || 'ollama').toLowerCase();
   const config = {
@@ -161,7 +207,7 @@ export async function generateWithGemma({ userMessage, contextText, mode = 'chat
   }
 
   return {
-    text: fallbackResponse(userMessage, contextText),
+    text: fallbackResponse(userMessage, outbreaks),
     provider: 'fallback',
     fallback: true,
   };
