@@ -78,5 +78,205 @@
     "severity": "medium",
     "reportedAt": "2026-04-30T00:00:00.000Z",
     "description": "Odisha tribal belt malaria rebound after heavy rains. Rapid diagnostic kits distributed."
+  },
+  {
+    "disease": "Ebola",
+    "location": "Kinshasa, DR Congo",
+    "latitude": -4.4419,
+    "longitude": 15.2663,
+    "cases": 84,
+    "severity": "high",
+    "reportedAt": "2026-05-08T00:00:00.000Z",
+    "description": "Localized Ebola outbreak under active monitoring and contact tracing."
+  },
+  {
+    "disease": "Malaria",
+    "location": "Lagos, Nigeria",
+    "latitude": 6.5244,
+    "longitude": 3.3792,
+    "cases": 720,
+    "severity": "high",
+    "reportedAt": "2026-05-02T00:00:00.000Z",
+    "description": "Seasonal malaria surge following heavy rainfall and increased mosquito breeding."
+  },
+  {
+    "disease": "Cholera",
+    "location": "Nairobi, Kenya",
+    "latitude": -1.2921,
+    "longitude": 36.8219,
+    "cases": 310,
+    "severity": "medium",
+    "reportedAt": "2026-04-22T00:00:00.000Z",
+    "description": "Localized cholera cases linked to sanitation challenges in peri-urban settlements."
+  },
+  {
+    "disease": "Zika",
+    "location": "Rio de Janeiro, Brazil",
+    "latitude": -22.9068,
+    "longitude": -43.1729,
+    "cases": 145,
+    "severity": "medium",
+    "reportedAt": "2026-04-28T00:00:00.000Z",
+    "description": "Localized Zika transmission under vector surveillance."
+  },
+  {
+    "disease": "Yellow Fever",
+    "location": "Bogotá, Colombia",
+    "latitude": 4.7110,
+    "longitude": -74.0721,
+    "cases": 53,
+    "severity": "medium",
+    "reportedAt": "2026-04-14T00:00:00.000Z",
+    "description": "Imported yellow fever cases prompted targeted vaccination campaigns."
+  },
+  {
+    "disease": "West Nile Virus",
+    "location": "Houston, USA",
+    "latitude": 29.7604,
+    "longitude": -95.3698,
+    "cases": 67,
+    "severity": "medium",
+    "reportedAt": "2026-04-15T00:00:00.000Z",
+    "description": "Mosquito-borne virus cases reported during early summer."
+  },
+  {
+    "disease": "COVID-19",
+    "location": "New York, USA",
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "cases": 1850,
+    "severity": "medium",
+    "reportedAt": "2026-05-06T00:00:00.000Z",
+    "description": "Seasonal uptick in respiratory infections and hospital admissions."
+  },
+  {
+    "disease": "Lyme Disease",
+    "location": "Toronto, Canada",
+    "latitude": 43.6532,
+    "longitude": -79.3832,
+    "cases": 92,
+    "severity": "low",
+    "reportedAt": "2026-04-12T00:00:00.000Z",
+    "description": "Tick-borne infections reported in suburban and wooded regions."
+  },
+  {
+    "disease": "Measles",
+    "location": "London, United Kingdom",
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "cases": 110,
+    "severity": "medium",
+    "reportedAt": "2026-04-20T00:00:00.000Z",
+    "description": "Clusters linked to reduced vaccination coverage."
+  },
+  {
+    "disease": "Influenza",
+    "location": "Berlin, Germany",
+    "latitude": 52.5200,
+    "longitude": 13.4050,
+    "cases": 760,
+    "severity": "medium",
+    "reportedAt": "2026-03-30T00:00:00.000Z",
+    "description": "Seasonal influenza activity remains elevated."
+  },
+  {
+    "disease": "Norovirus",
+    "location": "Paris, France",
+    "latitude": 48.8566,
+    "longitude": 2.3522,
+    "cases": 205,
+    "severity": "low",
+    "reportedAt": "2026-04-09T00:00:00.000Z",
+    "description": "Gastrointestinal illness outbreak in educational institutions."
+  },
+  {
+    "disease": "Dengue",
+    "location": "Bangkok, Thailand",
+    "latitude": 13.7563,
+    "longitude": 100.5018,
+    "cases": 980,
+    "severity": "high",
+    "reportedAt": "2026-05-04T00:00:00.000Z",
+    "description": "Urban dengue surge during peak mosquito season."
+  },
+  {
+    "disease": "Cholera",
+    "location": "Dhaka, Bangladesh",
+    "latitude": 23.8103,
+    "longitude": 90.4125,
+    "cases": 420,
+    "severity": "high",
+    "reportedAt": "2026-05-05T00:00:00.000Z",
+    "description": "Waterborne outbreak in densely populated communities."
+  },
+  {
+    "disease": "Avian Influenza",
+    "location": "Hanoi, Vietnam",
+    "latitude": 21.0278,
+    "longitude": 105.8342,
+    "cases": 24,
+    "severity": "medium",
+    "reportedAt": "2026-04-26T00:00:00.000Z",
+    "description": "Poultry-associated avian influenza cases under containment."
+  },
+  {
+    "disease": "COVID-19",
+    "location": "Tokyo, Japan",
+    "latitude": 35.6762,
+    "longitude": 139.6503,
+    "cases": 2140,
+    "severity": "medium",
+    "reportedAt": "2026-05-09T00:00:00.000Z",
+    "description": "Urban respiratory surge with increased outpatient visits."
+  },
+  {
+    "disease": "Influenza",
+    "location": "Sydney, Australia",
+    "latitude": -33.8688,
+    "longitude": 151.2093,
+    "cases": 930,
+    "severity": "medium",
+    "reportedAt": "2026-05-03T00:00:00.000Z",
+    "description": "Seasonal influenza activity increasing across New South Wales."
+  },
+  {
+    "disease": "Dengue",
+    "location": "Cairns, Australia",
+    "latitude": -16.9186,
+    "longitude": 145.7781,
+    "cases": 76,
+    "severity": "low",
+    "reportedAt": "2026-04-17T00:00:00.000Z",
+    "description": "Localized dengue transmission in tropical Queensland."
+  },
+  {
+    "disease": "Tuberculosis",
+    "location": "Cape Town, South Africa",
+    "latitude": -33.9249,
+    "longitude": 18.4241,
+    "cases": 430,
+    "severity": "high",
+    "reportedAt": "2026-05-07T00:00:00.000Z",
+    "description": "Ongoing TB burden with focused screening and treatment programs."
+  },
+  {
+    "disease": "MERS",
+    "location": "Riyadh, Saudi Arabia",
+    "latitude": 24.7136,
+    "longitude": 46.6753,
+    "cases": 18,
+    "severity": "medium",
+    "reportedAt": "2026-04-21T00:00:00.000Z",
+    "description": "Limited MERS cases identified and isolated."
+  },
+  {
+    "disease": "Hepatitis A",
+    "location": "Mexico City, Mexico",
+    "latitude": 19.4326,
+    "longitude": -99.1332,
+    "cases": 128,
+    "severity": "low",
+    "reportedAt": "2026-04-11T00:00:00.000Z",
+    "description": "Foodborne hepatitis A cases linked to local vendors."
   }
 ]
