@@ -1,26 +1,56 @@
 # OutbreakIQ
 
-**AI-powered GIS Disease Outbreak Assistant** — built for the **Gemma 4 Good Hackathon**.
+<div align="center">
 
-OutbreakIQ helps users visualize disease hotspots on an interactive map, explore dashboard analytics, chat with a Gemma-powered assistant grounded in outbreak data, and generate prevention recommendations for each record.
+![OutbreakIQ Banner](https://img.shields.io/badge/Gemma%204%20Good%20Hackathon-2026-blue?style=for-the-badge)
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react)
+![Node.js](https://img.shields.io/badge/Backend-Express-339933?style=for-the-badge&logo=node.js)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb)
+![Gemma](https://img.shields.io/badge/AI-Gemma%202%20via%20Ollama-4285F4?style=for-the-badge&logo=google)
 
-![OutbreakIQ](https://via.placeholder.com/1200x630/2563eb/ffffff?text=OutbreakIQ+Dashboard)
+### AI-powered GIS Disease Outbreak Intelligence Platform
 
-## Features
+Visualize outbreak hotspots, analyze epidemiological trends, and interact with a Gemma-powered assistant grounded in real-time public health data.
+
+🌐 **Live Demo:** https://outbreak-iq.vercel.app  
+
+</div>
+
+---
+
+## 📌 Overview
+
+OutbreakIQ is a production-ready full-stack application built for the **Gemma 4 Good Hackathon**. It combines geospatial visualization, interactive analytics, and responsible AI to help public health professionals, researchers, and citizens understand disease outbreaks and receive grounded prevention guidance.
+
+The platform supports:
+
+- 🗺️ Interactive GIS mapping of outbreak hotspots
+- 📊 Real-time analytics dashboard
+- 🤖 Gemma-powered AI chat assistant
+- 🛡️ Per-outbreak prevention recommendations
+- 📝 Full CRUD data management
+- 📄 PDF report generation
+- 🎙️ Voice-enabled queries
+
+---
+
+## ✨ Features
 
 | Feature | Description |
-|---------|-------------|
-| **Interactive Map** | Leaflet map with severity color-coded markers (green / yellow / red) |
-| **Dashboard** | Summary cards + bar, line, and pie charts (Recharts) |
-| **AI Chat** | Natural-language Q&A with outbreak context via Gemma 4 |
-| **Prevention** | Per-outbreak AI recommendations (symptoms, actions, risk) |
-| **Filters** | Disease, severity, date range, region, and search |
-| **Admin CRUD** | Add, edit, delete outbreak records |
-| **PDF Export** | Download filtered outbreak reports |
-| **Dark Mode** | Theme toggle with persistence |
-| **Voice Input** | Speech-to-text for AI chat (supported browsers) |
+|--------|-------------|
+| 🗺️ Interactive Map | Leaflet map with severity-based color-coded markers |
+| 📊 Analytics Dashboard | KPI cards, bar/line/pie charts, filters, and PDF export |
+| 🤖 AI Chat Assistant | Natural-language Q&A powered by Gemma |
+| 🛡️ Prevention Recommendations | AI-generated prevention and risk guidance |
+| 🔎 Advanced Filters | Disease, severity, region, search, and date range |
+| 📝 Admin CRUD | Create, update, and delete outbreak records |
+| 🌙 Dark Mode | Theme toggle with persistence |
+| 🎙️ Voice Input | Speech-to-text support for AI chat |
+| ☁️ Cloud Deployment | Vercel + Render + MongoDB Atlas |
 
-## Architecture
+---
+
+## 🏗️ Architecture
 
 ```mermaid
 flowchart TB
@@ -44,134 +74,269 @@ flowchart TB
   subgraph AI["Gemma 4"]
     Ollama[Ollama Local]
     Google[Google AI Studio]
+    Fallback[Grounded Fallback]
   end
 
   API_CLIENT --> API
   SVC --> Ollama
   SVC --> Google
+  SVC --> Fallback
 ```
 
-## Project Structure
+---
 
-```
+## 🧰 Tech Stack
+
+### Frontend
+- React 19
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- Leaflet
+- Recharts
+- Axios
+
+### Backend
+- Node.js
+- Express.js
+- Mongoose
+- PDFKit
+
+### AI
+- Gemma 2 via Ollama
+- Google AI Studio (optional)
+- Grounded fallback responses
+
+### Infrastructure
+- MongoDB Atlas
+- Vercel
+- Render
+
+---
+
+## 📁 Project Structure
+
+```text
 OutbreakIQ/
-├── client/          # React frontend (Vercel)
-├── server/          # Express API (Render)
-├── package.json     # Root scripts (npm run dev)
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── utils/
+│   └── public/
+│
+├── server/                 # Express backend
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── data/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── seed/
+│   │   └── services/
+│   └── render.yaml
+│
+├── package.json
 └── README.md
 ```
 
-## Quick Start
+---
+
+## 🚀 Live Deployment
+
+| Service | URL |
+|--------|-----|
+| Frontend | https://outbreak-iq.vercel.app |
+| Backend API | https://outbreakiq-api.onrender.com/api/outbreaks |
+
+---
+
+## ⚡ Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
-- MongoDB (local or Atlas)
-- Optional: [Ollama](https://ollama.com) with a Gemma model for full AI responses
+- npm
+- MongoDB Atlas or local MongoDB
+- Optional: Ollama with Gemma model
 
-### Installation
+### Clone Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Vya234/OutbreakIQ.git
 cd OutbreakIQ
-npm install
-npm install --prefix server
-npm install --prefix client
 ```
 
-### Environment
+### Install Dependencies
 
-**server/.env** (copy from `server/.env.example`):
+```bash
+npm install
+```
+
+---
+
+## 🔐 Environment Variables
+
+### `server/.env`
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/outbreakiq
+MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/outbreakiq
 GEMMA_PROVIDER=ollama
 GEMMA_API_URL=http://127.0.0.1:11434
 GEMMA_MODEL=gemma2:2b
-# For Google AI Studio:
-# GEMMA_PROVIDER=google
-# GEMMA_API_KEY=your_key
-# GEMMA_MODEL=gemma-2-9b-it
+CLIENT_URL=http://localhost:5173
 ```
 
-**client/.env** (optional):
+### `client/.env`
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-### Seed sample data
+---
+
+## 🤖 Ollama Setup (Optional)
 
 ```bash
-# Start MongoDB, then:
+ollama pull gemma2:2b
+ollama serve
+```
+
+If you don't want to run Ollama locally, set:
+
+```env
+GEMMA_PROVIDER=fallback
+```
+
+---
+
+## 🌱 Seed Sample Data
+
+```bash
 npm run seed
 ```
 
-Sample outbreaks include **Dengue (Delhi)**, **Malaria (Kolkata)**, **COVID-19 (Mumbai)**, **Cholera (Chennai)**, and **Nipah (Kerala)**.
+Seeds 8 realistic outbreak records across major Indian cities.
 
-### Run development
+---
+
+## 💻 Run Development Server
 
 ```bash
 npm run dev
 ```
 
-- Frontend: http://localhost:5173  
-- API: http://localhost:5000/api/health  
+### Local URLs
 
-The server auto-seeds from `server/data/sample-outbreaks.json` when the database is empty.
+- Frontend: http://localhost:5173
+- Backend: http://localhost:5000
+- Health Check: http://localhost:5000/api/health
 
-**No MongoDB?** The API falls back to an in-memory store loaded with the same sample data so you can demo immediately. For production, use MongoDB Atlas.
+---
 
-## API Routes
+## 📡 API Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/api/outbreaks` | List outbreaks (query filters supported) |
-| GET | `/api/outbreaks/stats` | Dashboard analytics |
-| GET | `/api/outbreaks/report/pdf` | PDF export |
-| GET | `/api/outbreaks/:id` | Single outbreak |
+| Method | Endpoint | Description |
+|------|------|------|
+| GET | `/api/outbreaks` | Fetch all outbreaks |
+| GET | `/api/outbreaks/stats` | Dashboard statistics |
+| GET | `/api/outbreaks/report/pdf` | Download PDF report |
+| GET | `/api/outbreaks/:id` | Fetch single outbreak |
 | POST | `/api/outbreaks` | Create outbreak |
 | PUT | `/api/outbreaks/:id` | Update outbreak |
 | DELETE | `/api/outbreaks/:id` | Delete outbreak |
-| POST | `/api/ai/chat` | AI chat `{ message, outbreakId? }` |
-| POST | `/api/ai/recommendations` | AI prevention `{ outbreakId?, disease? }` |
+| POST | `/api/ai/chat` | AI assistant endpoint |
+| POST | `/api/ai/recommendations` | Prevention recommendations |
 
-## Deployment
+---
+
+## 🖼️ Screenshots
+
+> Add your screenshots to `docs/screenshots/` and update these paths if needed.
+
+### Home Page
+![Home](docs/screenshots/home.png)
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Interactive Map
+![Map](docs/screenshots/map.png)
+
+### AI Assistant
+![AI Chat](docs/screenshots/ai-chat.png)
+
+---
+
+## ☁️ Deployment
 
 ### Frontend (Vercel)
 
-1. Import `client/` as the project root (or set Root Directory to `client`).
-2. Build command: `npm run build`
-3. Set `VITE_API_URL` to your Render API URL (e.g. `https://your-api.onrender.com/api`).
+- Root Directory: `client`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+Environment Variable:
+
+```env
+VITE_API_URL=https://outbreakiq-api.onrender.com/api
+```
 
 ### Backend (Render)
 
-1. Create a Web Service from `server/`.
-2. Build: `npm install` · Start: `npm start`
-3. Add env vars: `MONGODB_URI`, `GEMMA_*`, `CLIENT_URL` (Vercel URL).
-4. Use `server/render.yaml` as a blueprint if desired.
+- Root Directory: `server`
+- Build Command: `npm install`
+- Start Command: `npm start`
 
-### MongoDB
+Environment Variables:
 
-Use [MongoDB Atlas](https://www.mongodb.com/atlas) free tier and set `MONGODB_URI` on Render.
+```env
+PORT=5000
+MONGODB_URI=<your_atlas_uri>
+GEMMA_PROVIDER=fallback
+CLIENT_URL=https://outbreak-iq.vercel.app
+```
 
-## Hackathon Justification
+---
 
-- **Social impact:** Surfaces outbreak patterns and prevention guidance for communities and health workers.
-- **Gemma 4 core:** Chat and recommendations use Gemma via Ollama or Google AI Studio with structured outbreak context.
-- **Responsible AI:** Prompts require grounding in provided data and explicit uncertainty when information is missing.
-- **Production-ready:** Modular backend, validated CRUD, error handling, responsive UI, and deploy configs.
+## 🏆 Hackathon Justification
 
-## Demo Screenshots
+### 🌍 Social Impact
+Supports early awareness of dengue, malaria, cholera, Nipah, and COVID hotspots.
 
-Place screenshots in `docs/screenshots/` after running locally:
+### 🤖 Gemma at the Core
+Chat and prevention endpoints use Gemma with outbreak-aware context.
 
-1. Home + map preview  
-2. Dashboard charts  
-3. AI assistant chat  
-4. Prevention recommendations  
+### 🛡️ Responsible AI
+Responses are grounded in structured outbreak data and explicitly communicate uncertainty.
 
-## License
+### 🚀 Production Ready
+Fully deployable monorepo using Vercel, Render, and MongoDB Atlas.
 
-MIT — for hackathon and educational use. Verify health data with official sources before operational use.
+---
+
+## 🔮 Future Enhancements
+
+- Integration with WHO/CDC live data APIs
+- Forecasting models
+- SMS/email alerts
+- Multi-language support
+- Mobile application
+- Role-based access control
+
+---
+
+## 👤 Author
+
+**Kavya Rai**  
+IIT Kharagpur
+
+---
+
+<div align="center">
+
+**OutbreakIQ — AI-powered public health GIS for responsible outbreak intelligence.**
+
+</div>
