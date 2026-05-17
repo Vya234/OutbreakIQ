@@ -15,7 +15,7 @@ export function MapPage() {
         </p>
       </div>
       <ErrorAlert message={error} />
-      <FilterBar showDate={false} />
+      <FilterBar />
       <OutbreakMap height="min(70vh, 600px)" />
     </div>
   );

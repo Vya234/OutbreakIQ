@@ -14,7 +14,7 @@ export function RecommendationsPage() {
           AI-generated symptoms, prevention measures, and risk assessment per outbreak
         </p>
       </div>
-      <FilterBar showDate={false} />
+      <FilterBar />
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading outbreaks…</p>
       ) : !outbreaks.length ? (

@@ -1,80 +1,99 @@
 import { Search, RotateCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useOutbreaks } from '@/context/OutbreakContext';
+import { useOutbreakFilters } from '@/hooks/useOutbreakFilters';
 
-export function FilterBar({ showDate = true }) {
-  const { filters, setFilters, resetFilters } = useOutbreaks();
+const SEVERITY_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'high', label: 'High' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'low', label: 'Low' },
+];
 
-  const update = (key, value) => setFilters((f) => ({ ...f, [key]: value }));
+export function FilterBar() {
+  const {
+    filters,
+    filterOptions,
+    setSearch,
+    setDisease,
+    setSeverity,
+    setRegion,
+    resetFilters,
+    hasActiveFilters,
+    selectValues,
+  } = useOutbreakFilters();
 
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-sm animate-fade-in">
-      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-        <Search className="h-4 w-4" />
-        Filter & search outbreaks
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <div className="lg:col-span-2">
-          <Label htmlFor="search">Search</Label>
+    <section className="rounded-xl border bg-card p-4 shadow-sm animate-fade-in">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <label className="relative min-w-0 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            id="search"
-            placeholder="Disease or location..."
+            id="outbreak-search"
+            type="search"
+            placeholder="Search outbreaks..."
             value={filters.search}
-            onChange={(e) => update('search', e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-background pl-9"
+            aria-label="Search outbreaks"
           />
-        </div>
-        <div>
-          <Label>Disease</Label>
-          <Input
-            placeholder="e.g. Dengue"
-            value={filters.disease}
-            onChange={(e) => update('disease', e.target.value)}
-          />
-        </div>
-        <div>
-          <Label>Severity</Label>
-          <Select value={filters.severity || 'all'} onValueChange={(v) => update('severity', v === 'all' ? '' : v)}>
-            <SelectTrigger>
-              <SelectValue placeholder="All" />
+        </label>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:flex lg:shrink-0 lg:gap-2">
+          <Select value={selectValues.disease} onValueChange={setDisease}>
+            <SelectTrigger className="w-full bg-background lg:w-[160px]" aria-label="Filter by disease">
+              <SelectValue placeholder="Disease" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="all">All diseases</SelectItem>
+              {filterOptions.diseases.map((disease) => (
+                <SelectItem key={disease} value={disease}>
+                  {disease}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectValues.severity} onValueChange={setSeverity}>
+            <SelectTrigger className="w-full bg-background lg:w-[140px]" aria-label="Filter by severity">
+              <SelectValue placeholder="Severity" />
+            </SelectTrigger>
+            <SelectContent>
+              {SEVERITY_OPTIONS.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectValues.region} onValueChange={setRegion}>
+            <SelectTrigger className="w-full bg-background lg:w-[180px]" aria-label="Filter by region">
+              <SelectValue placeholder="Region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All regions</SelectItem>
+              {filterOptions.regions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Region</Label>
-          <Input
-            placeholder="State / city"
-            value={filters.location}
-            onChange={(e) => update('location', e.target.value)}
-          />
-        </div>
-        {showDate && (
-          <>
-            <div>
-              <Label htmlFor="from">From</Label>
-              <Input id="from" type="date" value={filters.from} onChange={(e) => update('from', e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="to">To</Label>
-              <Input id="to" type="date" value={filters.to} onChange={(e) => update('to', e.target.value)} />
-            </div>
-          </>
-        )}
-      </div>
-      <div className="mt-3 flex justify-end">
-        <Button variant="outline" size="sm" onClick={resetFilters}>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={resetFilters}
+          disabled={!hasActiveFilters}
+          className="w-full shrink-0 lg:w-auto"
+        >
           <RotateCcw className="h-4 w-4" />
-          Reset
+          Reset Filters
         </Button>
       </div>
-    </div>
+    </section>
   );
 }

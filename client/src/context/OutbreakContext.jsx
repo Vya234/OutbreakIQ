@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { outbreakApi } from '@/services/api';
+import { useOutbreakFilterOptions } from '@/hooks/useOutbreakFilterOptions';
 
 const OutbreakContext = createContext(null);
 
@@ -14,10 +15,13 @@ const defaultFilters = {
 
 export function OutbreakProvider({ children }) {
   const [outbreaks, setOutbreaks] = useState([]);
+  const [catalogOutbreaks, setCatalogOutbreaks] = useState([]);
   const [stats, setStats] = useState(null);
   const [filters, setFilters] = useState(defaultFilters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const filterOptions = useOutbreakFilterOptions(catalogOutbreaks);
 
   const queryParams = useMemo(() => {
     const p = {};
@@ -52,10 +56,24 @@ export function OutbreakProvider({ children }) {
     fetchOutbreaks();
   }, [fetchOutbreaks]);
 
+  useEffect(() => {
+    let cancelled = false;
+    outbreakApi
+      .list()
+      .then((res) => {
+        if (!cancelled) setCatalogOutbreaks(res.data || []);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const value = {
     outbreaks,
     stats,
     filters,
+    filterOptions,
     setFilters,
     resetFilters: () => setFilters(defaultFilters),
     loading,
