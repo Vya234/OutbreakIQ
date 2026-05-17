@@ -10,7 +10,7 @@ export function HomePage() {
     <div className="space-y-10 animate-fade-in">
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-accent/10 px-6 py-14 md:px-12">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-2 text-sm font-medium uppercase tracking-wider text-primary">Gemma 4 Good Hackathon</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-wider text-primary">AI-Powered Public Health Intelligence</p>
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
             OutbreakIQ
           </h1>
