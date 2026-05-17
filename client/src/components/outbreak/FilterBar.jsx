@@ -69,13 +69,16 @@ export function FilterBar() {
           </Select>
 
           <Select value={selectValues.region} onValueChange={setRegion}>
-            <SelectTrigger className="w-full bg-background lg:w-[180px]" aria-label="Filter by region">
+            <SelectTrigger
+              className="w-full bg-background lg:min-w-[200px] lg:max-w-[280px]"
+              aria-label="Filter by region"
+            >
               <SelectValue placeholder="Region" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="min-w-[var(--radix-select-trigger-width)] max-w-[min(100vw-2rem,320px)]">
               <SelectItem value="all">All regions</SelectItem>
               {filterOptions.regions.map((region) => (
-                <SelectItem key={region} value={region}>
+                <SelectItem key={region} value={region} className="[&_span:last-child]:whitespace-normal">
                   {region}
                 </SelectItem>
               ))}

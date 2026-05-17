@@ -1,6 +1,16 @@
 import { outbreakRepo } from './outbreakRepository.js';
 
 const RECENT_FALLBACK_LIMIT = 10;
+const HIGH_RISK_LIMIT = 7;
+
+const HIGH_RISK_QUERY_PATTERNS = [
+  'high risk',
+  'high-risk',
+  'risk regions',
+  'dangerous areas',
+  'most affected regions',
+  'critical outbreak zones',
+];
 
 const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'been', 'being', 'but', 'by',
@@ -92,6 +102,26 @@ export function rankOutbreaksByRelevance(outbreaks, query) {
 }
 
 /**
+ * Detect high-risk region / severity queries.
+ */
+export function isHighRiskQuery(query = '') {
+  const q = query.toLowerCase();
+  return HIGH_RISK_QUERY_PATTERNS.some((pattern) => q.includes(pattern));
+}
+
+/**
+ * All high-severity outbreaks, sorted by cases (desc), capped for context.
+ */
+export async function getHighRiskOutbreaks(limit = HIGH_RISK_LIMIT) {
+  const all = await outbreakRepo.find({}, { reportedAt: -1 });
+
+  return all
+    .filter((o) => String(o.severity).toLowerCase() === 'high')
+    .sort((a, b) => Number(b.cases) - Number(a.cases))
+    .slice(0, limit);
+}
+
+/**
  * Serialize outbreaks into compact text for LLM context windows.
  */
 export function formatOutbreaksForAI(outbreaks) {
@@ -117,13 +147,19 @@ export async function getRelevantOutbreaks(query, outbreakId, limit = RECENT_FAL
     return one ? [one] : [];
   }
 
+  const trimmed = query?.trim() || '';
+
+  if (trimmed && isHighRiskQuery(trimmed)) {
+    return getHighRiskOutbreaks(HIGH_RISK_LIMIT);
+  }
+
   const all = await outbreakRepo.find({}, { reportedAt: -1 });
 
-  if (!query?.trim()) {
+  if (!trimmed) {
     return all.slice(0, limit);
   }
 
-  const matches = rankOutbreaksByRelevance(all, query.trim());
+  const matches = rankOutbreaksByRelevance(all, trimmed);
   if (matches.length) return matches;
 
   return all.slice(0, limit);

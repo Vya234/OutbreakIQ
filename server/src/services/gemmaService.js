@@ -3,6 +3,8 @@
  * Falls back to rule-based responses when the AI provider is unavailable.
  */
 
+import { isHighRiskQuery } from './outbreakContextService.js';
+
 const SYSTEM_INSTRUCTION = `You are OutbreakIQ, a public health AI assistant powered by Gemma.
 Answer using ONLY the outbreak data provided in context when discussing specific outbreaks.
 Be accurate, concise, and practical. Include prevention steps when relevant.
@@ -60,7 +62,8 @@ async function callGoogleAI(prompt, config) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
 }
 
-const OFFLINE_BANNER = '**Offline mode** — Using outbreak records from the database. Start Ollama or configure Google AI for full Gemma responses.';
+const GROUNDED_BANNER =
+  '**Grounded Response Mode** — Generated using structured outbreak data.';
 
 function formatReportedAt(value) {
   return new Date(value).toLocaleDateString('en-IN', {
@@ -90,6 +93,36 @@ function isSummaryQuery(message) {
   return /\b(summarize|summary|overview|brief|status of|tell me about|describe)\b/i.test(message);
 }
 
+function getHighSeverityOutbreaks(outbreaks) {
+  return [...outbreaks]
+    .filter((o) => String(o.severity).toLowerCase() === 'high')
+    .sort((a, b) => Number(b.cases) - Number(a.cases))
+    .slice(0, 7);
+}
+
+function formatHighRiskLine(outbreak) {
+  const cases = Number(outbreak.cases).toLocaleString('en-IN');
+  return `- ${outbreak.location} — ${outbreak.disease} (${cases} cases)`;
+}
+
+function formatHighRiskResponse(outbreaks) {
+  const highRecords = getHighSeverityOutbreaks(outbreaks);
+
+  if (!highRecords.length) {
+    return `No high-severity outbreaks are currently present in the loaded dataset.\n\n${GROUNDED_BANNER}`;
+  }
+
+  const bullets = highRecords.map(formatHighRiskLine).join('\n');
+
+  return `Current high-risk regions include:
+
+${bullets}
+
+These outbreaks are classified as high severity and warrant increased monitoring and preventive action.
+
+${GROUNDED_BANNER}`;
+}
+
 /**
  * Offline fallback when AI is unreachable — concise, data-grounded answers.
  */
@@ -97,8 +130,12 @@ function fallbackResponse(userMessage, outbreaks = []) {
   const lower = userMessage.toLowerCase();
   const dataSummary = summarizeOutbreaks(outbreaks);
 
+  if (isHighRiskQuery(userMessage)) {
+    return formatHighRiskResponse(outbreaks);
+  }
+
   if (isSummaryQuery(userMessage)) {
-    return `${dataSummary}\n\n${OFFLINE_BANNER}`;
+    return `${dataSummary}\n\n${GROUNDED_BANNER}`;
   }
 
   if (lower.includes('symptom') && lower.includes('dengue')) {
@@ -110,21 +147,7 @@ function fallbackResponse(userMessage, outbreaks = []) {
 **From current data:**
 ${dataSummary}
 
-${OFFLINE_BANNER}`;
-  }
-
-  if (lower.includes('high risk') || lower.includes('high-risk')) {
-    const highRecords = outbreaks.filter((o) => o.severity === 'high');
-    const highSummary = highRecords.length
-      ? summarizeOutbreaks(highRecords)
-      : 'No high-severity outbreaks in the matched records.';
-
-    return `**High-risk assessment (from loaded data):**
-${highSummary}
-
-${highRecords.length ? `${highRecords.length} high-severity outbreak record(s) in context.` : 'Review the map for red (high severity) markers.'}
-
-${OFFLINE_BANNER}`;
+${GROUNDED_BANNER}`;
   }
 
   if (lower.includes('prevent') && lower.includes('malaria')) {
@@ -137,7 +160,7 @@ ${OFFLINE_BANNER}`;
 **Local context:**
 ${dataSummary}
 
-${OFFLINE_BANNER}`;
+${GROUNDED_BANNER}`;
   }
 
   if (outbreaks.length) {
@@ -147,14 +170,14 @@ ${dataSummary}
 
 **General guidance:** Follow WHO and local health department advisories. Vaccinate where available, practice hand hygiene, and report symptoms early.
 
-${OFFLINE_BANNER}`;
+${GROUNDED_BANNER}`;
   }
 
   return `No outbreak records in the database. Run \`npm run seed\` after starting MongoDB.
 
 **General guidance:** Follow WHO and local health department advisories.
 
-${OFFLINE_BANNER}`;
+${GROUNDED_BANNER}`;
 }
 
 /**
