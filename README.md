@@ -18,13 +18,15 @@ OutbreakIQ is a production-ready full-stack application built for the **Gemma 4 
 
 The platform supports:
 
-- 🗺️ Interactive GIS mapping of outbreak hotspots
-- 📊 Real-time analytics dashboard
-- 🤖 Gemma-powered AI chat assistant
-- 🛡️ Per-outbreak prevention recommendations
-- 📝 Full CRUD data management
-- 📄 PDF report generation
-- 🎙️ Voice-enabled queries
+- Interactive GIS mapping of outbreak hotspots
+- Real-time analytics dashboard
+- Gemma-powered AI chat assistant
+- Per-outbreak prevention recommendations
+- Full CRUD data management
+- PDF report generation
+- Voice-enabled queries
+
+The platform includes a global sample dataset of 28 outbreak records across six continents, demonstrating how the system scales from regional monitoring to worldwide disease intelligence.
 
 ---
 
@@ -32,19 +34,19 @@ The platform supports:
 
 | Feature | Description |
 |--------|-------------|
-| 🗺️ Interactive Map | Leaflet map with severity-based color-coded markers |
-| 📊 Analytics Dashboard | KPI cards, bar/line/pie charts, filters, and PDF export |
-| 🤖 AI Chat Assistant | Natural-language Q&A powered by Gemma |
-| 🛡️ Prevention Recommendations | AI-generated prevention and risk guidance |
-| 🔎 Advanced Filters | Disease, severity, region, search, and date range |
-| 📝 Admin CRUD | Create, update, and delete outbreak records |
-| 🌙 Dark Mode | Theme toggle with persistence |
-| 🎙️ Voice Input | Speech-to-text support for AI chat |
-| ☁️ Cloud Deployment | Vercel + Render + MongoDB Atlas |
+| Interactive Map | Leaflet map with severity-based color-coded markers |
+| Analytics Dashboard | KPI cards, bar/line/pie charts, filters, and PDF export |
+| AI Chat Assistant | Natural-language Q&A powered by Gemma |
+| Prevention Recommendations | AI-generated prevention and risk guidance |
+| Advanced Filters | Disease, severity, region, search, and date range |
+| Admin CRUD | Create, update, and delete outbreak records |
+| Dark Mode | Theme toggle with persistence |
+| Voice Input | Speech-to-text support for AI chat |
+| Cloud Deployment | Vercel + Render + MongoDB Atlas |
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 flowchart TB
@@ -79,7 +81,7 @@ flowchart TB
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 ### Frontend
 - React 19
@@ -108,7 +110,7 @@ flowchart TB
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 OutbreakIQ/
@@ -137,7 +139,7 @@ OutbreakIQ/
 
 ---
 
-## 🚀 Live Deployment
+## Live Deployment
 
 | Service | URL |
 |--------|-----|
@@ -146,7 +148,7 @@ OutbreakIQ/
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -191,7 +193,7 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-## 🤖 Ollama Setup (Optional)
+## Ollama Setup (Optional)
 
 ```bash
 ollama pull gemma2:2b
@@ -206,17 +208,58 @@ GEMMA_PROVIDER=fallback
 
 ---
 
-## 🌱 Seed Sample Data
+## Seed Sample Data
 
 ```bash
 npm run seed
 ```
 
-Seeds 8 realistic outbreak records across major Indian cities.
+Seeds 28 realistic outbreak records spanning six continents and covering diseases such as Dengue, COVID-19, Ebola, Cholera, Tuberculosis, MERS, Zika, and Nipah.
 
 ---
 
-## 💻 Run Development Server
+## 🌍 Global Sample Dataset
+
+OutbreakIQ ships with a curated dataset of 28 outbreak records across six continents, including:
+
+- Asia: India, Japan, Thailand, Bangladesh, Vietnam, Saudi Arabia
+- Africa: Nigeria, Kenya, DR Congo, South Africa
+- Europe: United Kingdom, Germany, France
+- North America: USA, Canada, Mexico
+- South America: Brazil, Colombia
+- Oceania: Australia
+
+The dataset covers a diverse set of diseases, including:
+
+- Dengue
+- Malaria
+- COVID-19
+- Ebola
+- Cholera
+- Zika
+- Yellow Fever
+- Tuberculosis
+- MERS
+- Influenza
+- Measles
+- Typhoid
+- Lyme Disease
+- Hepatitis A
+
+---
+
+## 📊 Dataset Summary
+
+| Metric | Value |
+|------|------:|
+| Total Outbreak Records | 28 |
+| Countries Represented | 19+ |
+| Continents Covered | 6 |
+| Diseases Included | 18+ |
+
+---
+
+## Run Development Server
 
 ```bash
 npm run dev
@@ -246,25 +289,23 @@ npm run dev
 
 ---
 
-## 🖼️ Screenshots
-
-> Add your screenshots to `docs/screenshots/` and update these paths if needed.
+## Screenshots
 
 ### Home Page
-![Home](docs/screenshots/home.png)
+![Home](screenshots/home.png)
 
 ### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](screenshots/dashboard.png)
 
 ### Interactive Map
-![Map](docs/screenshots/map.png)
+![Map](screenshots/map.png)
 
 ### AI Assistant
-![AI Chat](docs/screenshots/ai-chat.png)
+![AI Chat](screenshots/ai-chat.png)
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 ### Frontend (Vercel)
 
@@ -295,10 +336,10 @@ CLIENT_URL=https://outbreak-iq.vercel.app
 
 ---
 
-## 🏆 Hackathon Justification
+## Hackathon Justification
 
 ### 🌍 Social Impact
-Supports early awareness of dengue, malaria, cholera, Nipah, and COVID hotspots.
+Supports early awareness of disease outbreaks across six continents, helping users identify high-risk regions and access grounded prevention guidance.
 
 ### 🤖 Gemma at the Core
 Chat and prevention endpoints use Gemma with outbreak-aware context.
@@ -311,7 +352,7 @@ Fully deployable monorepo using Vercel, Render, and MongoDB Atlas.
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - Integration with WHO/CDC live data APIs
 - Forecasting models
