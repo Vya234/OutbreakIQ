@@ -1,0 +1,82 @@
+[
+  {
+    "disease": "Dengue",
+    "location": "Delhi, India",
+    "latitude": 28.6139,
+    "longitude": 77.209,
+    "cases": 1240,
+    "severity": "high",
+    "reportedAt": "2026-05-01T00:00:00.000Z",
+    "description": "Rising dengue cases across North Delhi with clusters in Shahdara and Rohini. Vector control teams deployed."
+  },
+  {
+    "disease": "Malaria",
+    "location": "Kolkata, India",
+    "latitude": 22.5726,
+    "longitude": 88.3639,
+    "cases": 580,
+    "severity": "medium",
+    "reportedAt": "2026-04-18T00:00:00.000Z",
+    "description": "Monsoon-linked malaria surge in Howrah and Salt Lake. Bed net distribution underway."
+  },
+  {
+    "disease": "COVID-19",
+    "location": "Mumbai, India",
+    "latitude": 19.076,
+    "longitude": 72.8777,
+    "cases": 3200,
+    "severity": "high",
+    "reportedAt": "2026-05-10T00:00:00.000Z",
+    "description": "Sub-variant wave in Mumbai Metropolitan Region. Hospital occupancy at 68% in private facilities."
+  },
+  {
+    "disease": "Cholera",
+    "location": "Chennai, India",
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "cases": 210,
+    "severity": "medium",
+    "reportedAt": "2026-04-25T00:00:00.000Z",
+    "description": "Waterborne cholera outbreak linked to contaminated supply in northern zones. ORS camps active."
+  },
+  {
+    "disease": "Nipah",
+    "location": "Kerala, India",
+    "latitude": 10.8505,
+    "longitude": 76.2711,
+    "cases": 12,
+    "severity": "high",
+    "reportedAt": "2026-05-12T00:00:00.000Z",
+    "description": "Confirmed Nipah cases in Kozhikode district. Contact tracing and fruit bat habitat surveys ongoing."
+  },
+  {
+    "disease": "Dengue",
+    "location": "Pune, India",
+    "latitude": 18.5204,
+    "longitude": 73.8567,
+    "cases": 340,
+    "severity": "low",
+    "reportedAt": "2026-03-20T00:00:00.000Z",
+    "description": "Early-season dengue alerts in Pimpri-Chinchwad. Preventive fogging scheduled."
+  },
+  {
+    "disease": "Typhoid",
+    "location": "Hyderabad, India",
+    "latitude": 17.385,
+    "longitude": 78.4867,
+    "cases": 95,
+    "severity": "low",
+    "reportedAt": "2026-04-05T00:00:00.000Z",
+    "description": "Food-handler linked typhoid cluster in Old City. Vaccination drive for high-risk groups."
+  },
+  {
+    "disease": "Malaria",
+    "location": "Bhubaneswar, India",
+    "latitude": 20.2961,
+    "longitude": 85.8245,
+    "cases": 180,
+    "severity": "medium",
+    "reportedAt": "2026-04-30T00:00:00.000Z",
+    "description": "Odisha tribal belt malaria rebound after heavy rains. Rapid diagnostic kits distributed."
+  }
+]
