@@ -8,7 +8,7 @@ Built for the Gemma 4 Impact Challenge.
 Visualize outbreak hotspots, analyze epidemiological trends, and interact with a Gemma-powered assistant grounded in real-time public health data.
 
  **Live Demo:** https://outbreak-iq.vercel.app  
- **Demo Video:** https://youtube.com/YOUR_VIDEO_LINK  
+ **Demo Video:** https://youtu.be/8A1PnW7j7ig  
  **GitHub Repository:** https://github.com/Vya234/OutbreakIQ  
 
 </div>
