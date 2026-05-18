@@ -169,13 +169,19 @@ export function AssistantPage() {
                   )}
                 >
                   <p className="prose-ai whitespace-pre-wrap">{m.content}</p>
-                  {m.role === 'assistant' && m.fallback && (
+                  {m.role === 'assistant' && m.fallback && !m.error && (
                     <Badge variant="outline" className="mt-2 gap-1 text-xs font-normal">
-                      <Sparkles className="h-3 w-3" />
+                      <Sparkles className="h-3 w-3" aria-hidden="true" />
                       Grounded Response Mode
+                      {m.contextCount != null && (
+                        <>
+                          {' '}
+                          • Based on {m.contextCount} relevant record{m.contextCount === 1 ? '' : 's'}
+                        </>
+                      )}
                     </Badge>
                   )}
-                  {m.role === 'assistant' && m.contextCount != null && !m.error && (
+                  {m.role === 'assistant' && !m.fallback && m.contextCount != null && !m.error && (
                     <p className="mt-1 text-xs text-muted-foreground">
                       Based on {m.contextCount} relevant record{m.contextCount === 1 ? '' : 's'}
                     </p>

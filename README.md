@@ -36,7 +36,10 @@ The platform includes a global sample dataset of 28 outbreak records across six 
 |--------|-------------|
 | Interactive Map | Leaflet map with severity-based color-coded markers |
 | Analytics Dashboard | KPI cards, bar/line/pie charts, filters, and PDF export |
-| AI Chat Assistant | Natural-language Q&A powered by Gemma |
+| AI Chat Assistant | Natural-language Q&A powered by Gemma with context-aware suggestion chips |
+| Grounded Response Mode | Rule-based fallback with disease-specific symptoms, prevention, and severity-aware risk answers |
+| Admin Authentication | JWT-protected CRUD at `/admin` (login at `/admin/login`) |
+| Client-Side Filtering | Dashboard, map, and charts update from `filteredOutbreaks` with geographic region mapping |
 | Prevention Recommendations | AI-generated prevention and risk guidance |
 | Advanced Filters | Disease, severity, region, search, and date range |
 | Admin CRUD | Create, update, and delete outbreak records |
@@ -101,7 +104,11 @@ flowchart TB
 ### AI
 - Gemma 2 via Ollama
 - Google AI Studio (optional)
-- Grounded fallback responses
+- **Grounded Response Mode** — structured fallback when Gemma is unavailable:
+  - Disease-specific **symptoms** and **warning signs**
+  - Disease-specific **prevention** guidance
+  - **Risk level** answers that interpret Low / Medium / High severity from outbreak data
+  - Concise outbreak context (cases, location, severity) without duplicating UI badges
 
 ### Infrastructure
 - MongoDB Atlas
@@ -179,11 +186,16 @@ npm install
 ```env
 PORT=5000
 MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/outbreakiq
+ADMIN_EMAIL=admin@outbreakiq.com
+ADMIN_PASSWORD=yourpassword
+JWT_SECRET=your_jwt_secret
 GEMMA_PROVIDER=ollama
 GEMMA_API_URL=http://127.0.0.1:11434
 GEMMA_MODEL=gemma2:2b
 CLIENT_URL=http://localhost:5173
 ```
+
+Copy `server/.env.example` to `server/.env` before running locally. Admin login will not work until `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `JWT_SECRET` are set.
 
 ### `client/.env`
 
@@ -205,6 +217,20 @@ If you don't want to run Ollama locally, set:
 ```env
 GEMMA_PROVIDER=fallback
 ```
+
+The API uses **Grounded Response Mode** automatically when Ollama/Google is unreachable or when `GEMMA_PROVIDER=fallback`. The chat UI shows a single badge: `Grounded Response Mode • Based on N relevant records`.
+
+### AI Chat behavior
+
+| Query type | Fallback behavior |
+|------------|-------------------|
+| Symptoms | Real disease symptoms + warning signs + brief outbreak context |
+| Prevention | Disease-specific prevention steps + outbreak context |
+| Risk level | Interprets **Low**, **Medium**, or **High** from record severity |
+| High-risk regions | Lists only **High** severity outbreaks |
+| Summary | Compact outbreak summary from matched records |
+
+Suggestion chips adapt to the selected **Context** outbreak (e.g. Nipah → “What are the symptoms of Nipah?”).
 
 ---
 
@@ -281,9 +307,10 @@ npm run dev
 | GET | `/api/outbreaks/stats` | Dashboard statistics |
 | GET | `/api/outbreaks/report/pdf` | Download PDF report |
 | GET | `/api/outbreaks/:id` | Fetch single outbreak |
-| POST | `/api/outbreaks` | Create outbreak |
-| PUT | `/api/outbreaks/:id` | Update outbreak |
-| DELETE | `/api/outbreaks/:id` | Delete outbreak |
+| POST | `/api/auth/login` | Admin login (returns JWT) |
+| POST | `/api/outbreaks` | Create outbreak (JWT required) |
+| PUT | `/api/outbreaks/:id` | Update outbreak (JWT required) |
+| DELETE | `/api/outbreaks/:id` | Delete outbreak (JWT required) |
 | POST | `/api/ai/chat` | AI assistant endpoint |
 | POST | `/api/ai/recommendations` | Prevention recommendations |
 
@@ -330,6 +357,9 @@ Environment Variables:
 ```env
 PORT=5000
 MONGODB_URI=<your_atlas_uri>
+ADMIN_EMAIL=admin@outbreakiq.com
+ADMIN_PASSWORD=<strong_password>
+JWT_SECRET=<random_secret>
 GEMMA_PROVIDER=fallback
 CLIENT_URL=https://outbreak-iq.vercel.app
 ```
@@ -345,7 +375,7 @@ Supports early awareness of disease outbreaks across six continents, helping use
 Chat and prevention endpoints use Gemma with outbreak-aware context.
 
 ### 🛡️ Responsible AI
-Responses are grounded in structured outbreak data and explicitly communicate uncertainty.
+Responses are grounded in structured outbreak data. **Grounded Response Mode** provides vetted symptom/prevention content and clear Low/Medium/High severity interpretation when live Gemma is unavailable — shown via a single UI badge, not repeated in the message body.
 
 ### 🚀 Production Ready
 Fully deployable monorepo using Vercel, Render, and MongoDB Atlas.
