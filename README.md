@@ -3,10 +3,13 @@
 <div align="center">
 
 ### AI-powered GIS Disease Outbreak Intelligence Platform
+Built for the Gemma 4 Impact Challenge.
 
 Visualize outbreak hotspots, analyze epidemiological trends, and interact with a Gemma-powered assistant grounded in real-time public health data.
 
-🌐 **Live Demo:** https://outbreak-iq.vercel.app  
+ **Live Demo:** https://outbreak-iq.vercel.app  
+ **Demo Video:** https://youtube.com/YOUR_VIDEO_LINK  
+ **GitHub Repository:** https://github.com/Vya234/OutbreakIQ  
 
 </div>
 
@@ -393,10 +396,10 @@ Fully deployable monorepo using Vercel, Render, and MongoDB Atlas.
 
 ---
 
-## 👤 Author
+## Team Members
 
 **Kavya Rai**  
-IIT Kharagpur
+**Oindrila Singha**
 
 ---
 
