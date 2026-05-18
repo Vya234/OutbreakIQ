@@ -15,7 +15,7 @@ Visualize outbreak hotspots, analyze epidemiological trends, and interact with a
 
 ---
 
-## 📌 Overview
+## Overview
 
 OutbreakIQ is a production-ready full-stack application built for the **Gemma 4 Good Hackathon**. It combines geospatial visualization, interactive analytics, and responsible AI to help public health professionals, researchers, and citizens understand disease outbreaks and receive grounded prevention guidance.
 
@@ -319,19 +319,26 @@ npm run dev
 
 ---
 
+# OutbreakIQ
+
+![OutbreakIQ Home](screenshots/home.png)
+
+## Features
+...
+
 ## Screenshots
 
-### Home Page
-![Home](screenshots/home.png)
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Interactive Map
+### Interactive Disease Map
 ![Map](screenshots/map.png)
 
-### AI Assistant
-![AI Chat](screenshots/ai-chat.png)
+### Analytics Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Gemma AI Assistant
+![AI Assistant](screenshots/ai-chat.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
 
 ---
 
@@ -371,16 +378,16 @@ CLIENT_URL=https://outbreak-iq.vercel.app
 
 ## Hackathon Justification
 
-### 🌍 Social Impact
+### Social Impact
 Supports early awareness of disease outbreaks across six continents, helping users identify high-risk regions and access grounded prevention guidance.
 
-### 🤖 Gemma at the Core
+### Gemma at the Core
 Chat and prevention endpoints use Gemma with outbreak-aware context.
 
-### 🛡️ Responsible AI
+### Responsible AI
 Responses are grounded in structured outbreak data. **Grounded Response Mode** provides vetted symptom/prevention content and clear Low/Medium/High severity interpretation when live Gemma is unavailable — shown via a single UI badge, not repeated in the message body.
 
-### 🚀 Production Ready
+### Production Ready
 Fully deployable monorepo using Vercel, Render, and MongoDB Atlas.
 
 ---
