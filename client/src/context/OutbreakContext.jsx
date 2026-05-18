@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { outbreakApi } from '@/services/api';
 import { useOutbreakFilterOptions } from '@/hooks/useOutbreakFilterOptions';
+import { filterOutbreaks, computeStatsFromOutbreaks, hasActiveFilters } from '@/lib/outbreakFilters';
 
 const OutbreakContext = createContext(null);
 
@@ -13,70 +14,79 @@ const defaultFilters = {
   to: '',
 };
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export function OutbreakProvider({ children }) {
   const [outbreaks, setOutbreaks] = useState([]);
-  const [catalogOutbreaks, setCatalogOutbreaks] = useState([]);
-  const [stats, setStats] = useState(null);
   const [filters, setFilters] = useState(defaultFilters);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [filtering, setFiltering] = useState(false);
   const [error, setError] = useState(null);
 
-  const filterOptions = useOutbreakFilterOptions(catalogOutbreaks);
+  const filterOptions = useOutbreakFilterOptions(outbreaks);
 
-  const queryParams = useMemo(() => {
-    const p = {};
-    if (filters.search) p.search = filters.search;
-    if (filters.disease) p.disease = filters.disease;
-    if (filters.severity) p.severity = filters.severity;
-    if (filters.location) p.location = filters.location;
-    if (filters.from) p.from = filters.from;
-    if (filters.to) p.to = filters.to;
-    return p;
-  }, [filters]);
+  useEffect(() => {
+    if (filters.search === debouncedSearch) {
+      setFiltering(false);
+      return;
+    }
+    setFiltering(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+      setFiltering(false);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [filters.search, debouncedSearch]);
+
+  const effectiveFilters = useMemo(
+    () => ({ ...filters, search: debouncedSearch }),
+    [filters, debouncedSearch]
+  );
+
+  const filteredOutbreaks = useMemo(
+    () => filterOutbreaks(outbreaks, effectiveFilters),
+    [outbreaks, effectiveFilters]
+  );
+
+  const filteredStats = useMemo(
+    () => computeStatsFromOutbreaks(filteredOutbreaks),
+    [filteredOutbreaks]
+  );
 
   const fetchOutbreaks = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [listRes, statsRes] = await Promise.all([
-        outbreakApi.list(queryParams),
-        outbreakApi.stats(),
-      ]);
+      const listRes = await outbreakApi.list();
       setOutbreaks(listRes.data || []);
-      setStats(statsRes.data || null);
     } catch (err) {
       setError(err.message);
       setOutbreaks([]);
     } finally {
       setLoading(false);
     }
-  }, [queryParams]);
+  }, []);
 
   useEffect(() => {
     fetchOutbreaks();
   }, [fetchOutbreaks]);
 
-  useEffect(() => {
-    let cancelled = false;
-    outbreakApi
-      .list()
-      .then((res) => {
-        if (!cancelled) setCatalogOutbreaks(res.data || []);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   const value = {
     outbreaks,
-    stats,
+    filteredOutbreaks,
+    filteredStats,
     filters,
+    effectiveFilters,
     filterOptions,
     setFilters,
-    resetFilters: () => setFilters(defaultFilters),
+    resetFilters: () => {
+      setFilters(defaultFilters);
+      setDebouncedSearch('');
+    },
+    hasActiveFilters: hasActiveFilters(filters),
     loading,
+    filtering,
     error,
     refresh: fetchOutbreaks,
   };

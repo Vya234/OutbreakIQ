@@ -7,9 +7,11 @@ import { isHighRiskQuery } from './outbreakContextService.js';
 
 const SYSTEM_INSTRUCTION = `You are OutbreakIQ, a public health AI assistant powered by Gemma.
 Answer using ONLY the outbreak data provided in context when discussing specific outbreaks.
+Summarize relevant records in plain language — do not dump raw data tables or repeat every field.
+Show only outbreaks that match the user's question. For high-risk region questions, discuss only high-severity records.
 Be accurate, concise, and practical. Include prevention steps when relevant.
 If data is missing or uncertain, say so clearly — do not invent case numbers or locations.
-Use bullet points for lists. Keep responses under 400 words unless asked for detail.`;
+Use bullet points for lists. Keep responses under 300 words unless asked for detail.`;
 
 /**
  * Call Ollama generate API.
@@ -81,11 +83,22 @@ function formatOutbreakSummary(outbreak) {
 - **Details:** ${outbreak.description || 'No description available.'}`;
 }
 
-function summarizeOutbreaks(outbreaks) {
+function summarizeOutbreaks(outbreaks, { compact = false } = {}) {
   if (!outbreaks?.length) {
     return 'No matching outbreak records found. Run `npm run seed` after starting MongoDB.';
   }
   if (outbreaks.length === 1) return formatOutbreakSummary(outbreaks[0]);
+
+  if (compact || outbreaks.length > 3) {
+    const totalCases = outbreaks.reduce((s, o) => s + Number(o.cases || 0), 0);
+    const lines = outbreaks.slice(0, 7).map((o) => {
+      const cases = Number(o.cases).toLocaleString('en-IN');
+      return `- **${o.disease}** (${o.severity}) — ${o.location}: ${cases} cases`;
+    });
+    const more = outbreaks.length > 7 ? `\n- …and ${outbreaks.length - 7} more matching records` : '';
+    return `**Summary (${outbreaks.length} relevant outbreaks, ${totalCases.toLocaleString('en-IN')} total cases):**\n\n${lines.join('\n')}${more}`;
+  }
+
   return outbreaks.map(formatOutbreakSummary).join('\n\n');
 }
 
@@ -124,11 +137,11 @@ ${GROUNDED_BANNER}`;
 }
 
 /**
- * Offline fallback when AI is unreachable — concise, data-grounded answers.
+ * Grounded fallback when AI is unreachable — concise, data-grounded answers.
  */
 function fallbackResponse(userMessage, outbreaks = []) {
   const lower = userMessage.toLowerCase();
-  const dataSummary = summarizeOutbreaks(outbreaks);
+  const dataSummary = summarizeOutbreaks(outbreaks, { compact: outbreaks.length > 1 });
 
   if (isHighRiskQuery(userMessage)) {
     return formatHighRiskResponse(outbreaks);

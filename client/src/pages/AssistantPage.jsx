@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mic, MicOff, Send, Loader2, Bot, User } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { aiApi } from '@/services/api';
 import { useOutbreaks } from '@/context/OutbreakContext';
@@ -47,7 +48,13 @@ export function AssistantPage() {
       const res = await aiApi.chat(msg, outbreakId || undefined);
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: res.data.reply, provider: res.data.provider, fallback: res.data.fallback },
+        {
+          role: 'assistant',
+          content: res.data.reply,
+          provider: res.data.provider,
+          fallback: res.data.fallback,
+          contextCount: res.data.contextCount,
+        },
       ]);
     } catch (err) {
       setMessages((m) => [...m, { role: 'assistant', content: `Error: ${err.message}`, error: true }]);
@@ -88,7 +95,7 @@ export function AssistantPage() {
     <div className="mx-auto max-w-4xl space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold">AI Chat Assistant</h1>
-        <p className="text-muted-foreground">Gemma 4 with outbreak-aware context</p>
+        <p className="text-muted-foreground">Gemma with outbreak-aware, summarized responses</p>
       </div>
 
       <Card>
@@ -116,7 +123,8 @@ export function AssistantPage() {
                 key={s}
                 type="button"
                 onClick={() => send(s)}
-                className="rounded-full border bg-muted/50 px-3 py-1 text-xs hover:bg-muted"
+                disabled={loading}
+                className="rounded-full border bg-muted/50 px-3 py-1 text-xs hover:bg-muted disabled:opacity-50"
               >
                 {s}
               </button>
@@ -141,14 +149,25 @@ export function AssistantPage() {
                   )}
                 >
                   <p className="prose-ai whitespace-pre-wrap">{m.content}</p>
+                  {m.role === 'assistant' && m.fallback && (
+                    <Badge variant="outline" className="mt-2 gap-1 text-xs font-normal">
+                      <Sparkles className="h-3 w-3" />
+                      Grounded Response Mode
+                    </Badge>
+                  )}
+                  {m.role === 'assistant' && m.contextCount != null && !m.error && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Based on {m.contextCount} relevant record{m.contextCount === 1 ? '' : 's'}
+                    </p>
+                  )}
                 </div>
                 {m.role === 'user' && <User className="mt-1 h-5 w-5 shrink-0" />}
               </div>
             ))}
             {loading && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status" aria-live="polite">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Gemma is thinking…
+                Analyzing outbreak data…
               </div>
             )}
             <div ref={bottomRef} />
@@ -167,9 +186,10 @@ export function AssistantPage() {
               }}
               rows={2}
               className="resize-none"
+              disabled={loading}
             />
             <div className="flex flex-col gap-2">
-              <Button size="icon" variant="outline" onClick={toggleVoice} aria-label="Voice input">
+              <Button size="icon" variant="outline" onClick={toggleVoice} aria-label="Voice input" disabled={loading}>
                 {listening ? <MicOff className="h-4 w-4 text-health-high" /> : <Mic className="h-4 w-4" />}
               </Button>
               <Button size="icon" onClick={() => send()} disabled={loading}>

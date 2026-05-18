@@ -1,21 +1,20 @@
-import { Activity, AlertTriangle, BarChart3, MapPin } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useOutbreaks } from '@/context/OutbreakContext';
 
-const icons = [Activity, BarChart3, MapPin, AlertTriangle];
-
 export function StatsCards() {
-  const { stats, loading } = useOutbreaks();
+  const { filteredStats, loading, filtering } = useOutbreaks();
+  const isBusy = loading || filtering;
 
   const items = [
-    { title: 'Total Outbreaks', value: stats?.totalOutbreaks ?? '—', icon: Activity },
-    { title: 'Total Cases', value: stats?.totalCases?.toLocaleString() ?? '—', icon: BarChart3 },
-    { title: 'High-Risk Regions', value: stats?.highRiskRegions ?? '—', icon: MapPin },
-    { title: 'Most Common Disease', value: stats?.mostCommonDisease ?? '—', icon: AlertTriangle },
+    { title: 'Total Outbreaks', value: filteredStats?.totalOutbreaks ?? '—', icon: Activity },
+    { title: 'Total Cases', value: filteredStats?.totalCases?.toLocaleString() ?? '—', icon: BarChart3 },
+    { title: 'High Severity', value: filteredStats?.highSeverityCount ?? '—', icon: ShieldAlert },
+    { title: 'Most Common Disease', value: filteredStats?.mostCommonDisease ?? '—', icon: AlertTriangle },
   ];
 
-  if (loading) {
+  if (isBusy) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (

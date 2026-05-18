@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Pencil, Plus, Trash2, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { outbreakApi } from '@/services/api';
 import { useOutbreaks } from '@/context/OutbreakContext';
+import { useAuth } from '@/context/AuthContext';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorAlert } from '@/components/common/ErrorAlert';
 import { formatDate, severityLabel } from '@/lib/utils';
@@ -26,9 +28,12 @@ const emptyForm = {
 
 export function AdminPage() {
   const { outbreaks, loading, error, refresh } = useOutbreaks();
+  const { email, logout } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [formError, setFormError] = useState(null);
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
@@ -52,6 +57,11 @@ export function AdminPage() {
     setEditingId(null);
     setForm(emptyForm);
     setFormError(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login', { replace: true });
   };
 
   const submit = async (e) => {
@@ -83,20 +93,30 @@ export function AdminPage() {
 
   const remove = async (id) => {
     if (!confirm('Delete this outbreak record?')) return;
+    setDeletingId(id);
     try {
       await outbreakApi.remove(id);
       if (editingId === id) reset();
       refresh();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setDeletingId(null);
     }
   };
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Admin — Data Management</h1>
-        <p className="text-muted-foreground">Add, edit, or delete outbreak records</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Admin — Data Management</h1>
+          <p className="text-muted-foreground">Add, edit, or delete outbreak records</p>
+          {email && <p className="mt-1 text-xs text-muted-foreground">Signed in as {email}</p>}
+        </div>
+        <Button variant="outline" onClick={handleLogout}>
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
       </div>
 
       <ErrorAlert message={error} />
@@ -112,27 +132,27 @@ export function AdminPage() {
           <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label>Disease *</Label>
-              <Input value={form.disease} onChange={(e) => set('disease', e.target.value)} required />
+              <Input value={form.disease} onChange={(e) => set('disease', e.target.value)} required disabled={submitting} />
             </div>
             <div>
               <Label>Location *</Label>
-              <Input value={form.location} onChange={(e) => set('location', e.target.value)} required />
+              <Input value={form.location} onChange={(e) => set('location', e.target.value)} required disabled={submitting} />
             </div>
             <div>
               <Label>Latitude *</Label>
-              <Input type="number" step="any" value={form.latitude} onChange={(e) => set('latitude', e.target.value)} required />
+              <Input type="number" step="any" value={form.latitude} onChange={(e) => set('latitude', e.target.value)} required disabled={submitting} />
             </div>
             <div>
               <Label>Longitude *</Label>
-              <Input type="number" step="any" value={form.longitude} onChange={(e) => set('longitude', e.target.value)} required />
+              <Input type="number" step="any" value={form.longitude} onChange={(e) => set('longitude', e.target.value)} required disabled={submitting} />
             </div>
             <div>
               <Label>Cases *</Label>
-              <Input type="number" min="0" value={form.cases} onChange={(e) => set('cases', e.target.value)} required />
+              <Input type="number" min="0" value={form.cases} onChange={(e) => set('cases', e.target.value)} required disabled={submitting} />
             </div>
             <div>
               <Label>Severity *</Label>
-              <Select value={form.severity} onValueChange={(v) => set('severity', v)}>
+              <Select value={form.severity} onValueChange={(v) => set('severity', v)} disabled={submitting}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -145,19 +165,28 @@ export function AdminPage() {
             </div>
             <div>
               <Label>Report date *</Label>
-              <Input type="date" value={form.reportedAt} onChange={(e) => set('reportedAt', e.target.value)} required />
+              <Input type="date" value={form.reportedAt} onChange={(e) => set('reportedAt', e.target.value)} required disabled={submitting} />
             </div>
             <div className="sm:col-span-2">
               <Label>Description</Label>
-              <Textarea value={form.description} onChange={(e) => set('description', e.target.value)} rows={3} />
+              <Textarea value={form.description} onChange={(e) => set('description', e.target.value)} rows={3} disabled={submitting} />
             </div>
             {formError && <p className="text-sm text-health-high sm:col-span-2">{formError}</p>}
             <div className="flex gap-2 sm:col-span-2">
               <Button type="submit" disabled={submitting}>
-                {editingId ? 'Update' : 'Create'}
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving…
+                  </>
+                ) : editingId ? (
+                  'Update'
+                ) : (
+                  'Create'
+                )}
               </Button>
               {editingId && (
-                <Button type="button" variant="outline" onClick={reset}>
+                <Button type="button" variant="outline" onClick={reset} disabled={submitting}>
                   Cancel
                 </Button>
               )}
@@ -172,7 +201,10 @@ export function AdminPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading records…
+            </div>
           ) : !outbreaks.length ? (
             <EmptyState title="No outbreaks" message="Add your first record above." />
           ) : (
@@ -200,11 +232,20 @@ export function AdminPage() {
                       <td className="py-3 pr-4">{formatDate(o.reportedAt)}</td>
                       <td className="py-3">
                         <div className="flex gap-1">
-                          <Button size="sm" variant="outline" onClick={() => startEdit(o)}>
+                          <Button size="sm" variant="outline" onClick={() => startEdit(o)} disabled={submitting || deletingId}>
                             <Pencil className="h-3 w-3" />
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => remove(o._id)}>
-                            <Trash2 className="h-3 w-3" />
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => remove(o._id)}
+                            disabled={submitting || deletingId === o._id}
+                          >
+                            {deletingId === o._id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-3 w-3" />
+                            )}
                           </Button>
                         </div>
                       </td>

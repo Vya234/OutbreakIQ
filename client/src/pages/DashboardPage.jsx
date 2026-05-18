@@ -3,21 +3,22 @@ import { Button } from '@/components/ui/button';
 import { FilterBar } from '@/components/outbreak/FilterBar';
 import { StatsCards } from '@/components/outbreak/StatsCards';
 import { DashboardCharts } from '@/components/outbreak/DashboardCharts';
+import { OutbreakRecordsTable } from '@/components/outbreak/OutbreakRecordsTable';
 import { ErrorAlert } from '@/components/common/ErrorAlert';
 import { useOutbreaks } from '@/context/OutbreakContext';
 import { outbreakApi } from '@/services/api';
 
 export function DashboardPage() {
-  const { error, filters } = useOutbreaks();
+  const { error, effectiveFilters } = useOutbreaks();
 
   const downloadPdf = async () => {
     const params = {};
-    if (filters.search) params.search = filters.search;
-    if (filters.disease) params.disease = filters.disease;
-    if (filters.severity) params.severity = filters.severity;
-    if (filters.location) params.location = filters.location;
-    if (filters.from) params.from = filters.from;
-    if (filters.to) params.to = filters.to;
+    if (effectiveFilters.search) params.search = effectiveFilters.search;
+    if (effectiveFilters.disease) params.disease = effectiveFilters.disease;
+    if (effectiveFilters.severity) params.severity = effectiveFilters.severity;
+    if (effectiveFilters.location) params.location = effectiveFilters.location;
+    if (effectiveFilters.from) params.from = effectiveFilters.from;
+    if (effectiveFilters.to) params.to = effectiveFilters.to;
 
     const res = await outbreakApi.downloadPdf(params);
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
@@ -44,6 +45,7 @@ export function DashboardPage() {
       <FilterBar />
       <StatsCards />
       <DashboardCharts />
+      <OutbreakRecordsTable />
     </div>
   );
 }

@@ -7,7 +7,7 @@ const ALL = 'all';
  * Filter state helpers for search + dropdown constraints.
  */
 export function useOutbreakFilters() {
-  const { filters, setFilters, resetFilters, filterOptions } = useOutbreaks();
+  const { filters, setFilters, resetFilters, filterOptions, hasActiveFilters } = useOutbreaks();
 
   const setSearch = useCallback(
     (search) => setFilters((f) => ({ ...f, search })),
@@ -27,10 +27,6 @@ export function useOutbreakFilters() {
   const setRegion = useCallback(
     (value) => setFilters((f) => ({ ...f, location: value === ALL ? '' : value })),
     [setFilters]
-  );
-
-  const hasActiveFilters = Boolean(
-    filters.search || filters.disease || filters.severity || filters.location
   );
 
   return {

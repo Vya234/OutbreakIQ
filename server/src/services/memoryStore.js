@@ -49,7 +49,12 @@ function matchFilter(doc, filter) {
     const ok = filter.$or.some((clause) => {
       const re = Object.values(clause)[0];
       if (!(re instanceof RegExp)) return false;
-      return re.test(doc.disease) || re.test(doc.location) || re.test(doc.description || '');
+      return (
+        re.test(doc.disease) ||
+        re.test(doc.location) ||
+        re.test(doc.severity || '') ||
+        re.test(doc.description || '')
+      );
     });
     if (!ok) return false;
   }

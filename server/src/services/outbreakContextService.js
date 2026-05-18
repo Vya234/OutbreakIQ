@@ -181,6 +181,7 @@ export function buildOutbreakFilter(query) {
     filter.$or = [
       { disease: new RegExp(query.search, 'i') },
       { location: new RegExp(query.search, 'i') },
+      { severity: new RegExp(query.search, 'i') },
       { description: new RegExp(query.search, 'i') },
     ];
   }

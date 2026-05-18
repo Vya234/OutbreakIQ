@@ -7,7 +7,6 @@ import { formatDate, SEVERITY_COLORS, severityLabel } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Fix default marker icons in Vite bundler
 import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import shadow from 'leaflet/dist/images/marker-shadow.png';
@@ -41,31 +40,42 @@ function FitBounds({ outbreaks }) {
 }
 
 export function OutbreakMap({ height = '500px' }) {
-  const { outbreaks, loading, error } = useOutbreaks();
+  const { filteredOutbreaks, loading, filtering, error, hasActiveFilters } = useOutbreaks();
+  const isBusy = loading || filtering;
 
   const center = useMemo(() => {
-    if (!outbreaks.length) return [20.5937, 78.9629];
-    const lat = outbreaks.reduce((s, o) => s + o.latitude, 0) / outbreaks.length;
-    const lng = outbreaks.reduce((s, o) => s + o.longitude, 0) / outbreaks.length;
+    if (!filteredOutbreaks.length) return [20.5937, 78.9629];
+    const lat = filteredOutbreaks.reduce((s, o) => s + o.latitude, 0) / filteredOutbreaks.length;
+    const lng = filteredOutbreaks.reduce((s, o) => s + o.longitude, 0) / filteredOutbreaks.length;
     return [lat, lng];
-  }, [outbreaks]);
+  }, [filteredOutbreaks]);
 
-  if (loading) {
+  if (isBusy) {
     return <Skeleton className="w-full rounded-xl" style={{ height }} />;
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center rounded-xl border border-dashed bg-muted/50 p-8" style={{ height }}>
+      <div
+        className="flex items-center justify-center rounded-xl border border-dashed bg-muted/50 p-8"
+        style={{ height }}
+      >
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
     );
   }
 
-  if (!outbreaks.length) {
+  if (!filteredOutbreaks.length) {
     return (
-      <div className="flex items-center justify-center rounded-xl border border-dashed bg-muted/50 p-8" style={{ height }}>
-        <p className="text-sm text-muted-foreground">No outbreaks match your filters.</p>
+      <div
+        className="flex items-center justify-center rounded-xl border border-dashed bg-muted/50 p-8"
+        style={{ height }}
+      >
+        <p className="text-sm text-muted-foreground" role="status">
+          {hasActiveFilters
+            ? 'No outbreak records match the selected filters.'
+            : 'No outbreak records available.'}
+        </p>
       </div>
     );
   }
@@ -77,14 +87,16 @@ export function OutbreakMap({ height = '500px' }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <FitBounds outbreaks={outbreaks} />
-        {outbreaks.map((o) => (
+        <FitBounds outbreaks={filteredOutbreaks} />
+        {filteredOutbreaks.map((o) => (
           <Marker key={o._id} position={[o.latitude, o.longitude]} icon={createSeverityIcon(o.severity)}>
             <Popup>
               <div className="min-w-[180px] space-y-1 text-sm">
                 <p className="font-semibold">{o.disease}</p>
                 <p className="text-muted-foreground">{o.location}</p>
-                <p>Cases: <strong>{o.cases.toLocaleString()}</strong></p>
+                <p>
+                  Cases: <strong>{o.cases.toLocaleString()}</strong>
+                </p>
                 <Badge variant={o.severity}>{severityLabel(o.severity)}</Badge>
                 <p className="text-xs text-muted-foreground">Reported: {formatDate(o.reportedAt)}</p>
               </div>
@@ -93,9 +105,15 @@ export function OutbreakMap({ height = '500px' }) {
         ))}
       </MapContainer>
       <div className="flex flex-wrap gap-4 border-t bg-card px-4 py-2 text-xs">
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-health-low" /> Low</span>
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-health-medium" /> Medium</span>
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-health-high" /> High</span>
+        <span className="flex items-center gap-1">
+          <span className="h-3 w-3 rounded-full bg-health-low" /> Low
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-3 w-3 rounded-full bg-health-medium" /> Medium
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-3 w-3 rounded-full bg-health-high" /> High
+        </span>
       </div>
     </div>
   );

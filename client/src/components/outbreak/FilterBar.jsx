@@ -1,8 +1,9 @@
-import { Search, RotateCcw } from 'lucide-react';
+import { Search, RotateCcw, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useOutbreakFilters } from '@/hooks/useOutbreakFilters';
+import { useOutbreaks } from '@/context/OutbreakContext';
 
 const SEVERITY_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -12,8 +13,8 @@ const SEVERITY_OPTIONS = [
 ];
 
 export function FilterBar() {
+  const { outbreaks, filteredOutbreaks, loading, filtering } = useOutbreaks();
   const {
-    filters,
     filterOptions,
     setSearch,
     setDisease,
@@ -22,10 +23,15 @@ export function FilterBar() {
     resetFilters,
     hasActiveFilters,
     selectValues,
+    filters,
   } = useOutbreakFilters();
 
+  const total = outbreaks.length;
+  const shown = filteredOutbreaks.length;
+  const isBusy = loading || filtering;
+
   return (
-    <section className="rounded-xl border bg-card p-4 shadow-sm animate-fade-in">
+    <section className="space-y-3 rounded-xl border bg-card p-4 shadow-sm animate-fade-in">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <label className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -36,7 +42,7 @@ export function FilterBar() {
             value={filters.search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-background pl-9"
-            aria-label="Search outbreaks"
+            aria-label="Search outbreaks by disease, location, severity, or description"
           />
         </label>
 
@@ -71,7 +77,7 @@ export function FilterBar() {
           <Select value={selectValues.region} onValueChange={setRegion}>
             <SelectTrigger
               className="w-full bg-background lg:min-w-[200px] lg:max-w-[280px]"
-              aria-label="Filter by region"
+              aria-label="Filter by geographic region"
             >
               <SelectValue placeholder="Region" />
             </SelectTrigger>
@@ -96,6 +102,18 @@ export function FilterBar() {
           <RotateCcw className="h-4 w-4" />
           Reset Filters
         </Button>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+        <p aria-live="polite" className="flex items-center gap-2">
+          {isBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
+          Showing {shown} of {total} outbreaks
+        </p>
+        {hasActiveFilters && !isBusy && shown === 0 && (
+          <p className="text-health-high" role="status">
+            No outbreak records match the selected filters.
+          </p>
+        )}
       </div>
     </section>
   );

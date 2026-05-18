@@ -15,14 +15,16 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/common/EmptyState';
 import { useOutbreaks } from '@/context/OutbreakContext';
 
 const SEV_COLORS = { low: '#22c55e', medium: '#eab308', high: '#ef4444' };
 
 export function DashboardCharts() {
-  const { stats, loading } = useOutbreaks();
+  const { filteredStats, filteredOutbreaks, loading, filtering, hasActiveFilters } = useOutbreaks();
+  const isBusy = loading || filtering;
 
-  if (loading) {
+  if (isBusy) {
     return (
       <div className="grid gap-4 lg:grid-cols-2">
         <Skeleton className="h-72 rounded-xl lg:col-span-2" />
@@ -32,9 +34,22 @@ export function DashboardCharts() {
     );
   }
 
-  const byDisease = stats?.byDisease || [];
-  const timeline = stats?.timeline || [];
-  const severityData = Object.entries(stats?.severityDist || {}).map(([name, value]) => ({
+  if (!filteredOutbreaks.length) {
+    return (
+      <EmptyState
+        title="No data to chart"
+        message={
+          hasActiveFilters
+            ? 'No outbreak records match the selected filters.'
+            : 'No outbreak records available.'
+        }
+      />
+    );
+  }
+
+  const byDisease = filteredStats?.byDisease || [];
+  const timeline = filteredStats?.timeline || [];
+  const severityData = Object.entries(filteredStats?.severityDist || {}).map(([name, value]) => ({
     name: name.charAt(0).toUpperCase() + name.slice(1),
     value,
     fill: SEV_COLORS[name],

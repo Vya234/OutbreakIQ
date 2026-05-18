@@ -4,6 +4,7 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import outbreakRoutes from './routes/outbreakRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { Outbreak } from './models/Outbreak.js';
 import { initMemoryStore } from './services/memoryStore.js';
@@ -12,6 +13,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+function warnIfAuthNotConfigured() {
+  const missing = ['ADMIN_EMAIL', 'ADMIN_PASSWORD', 'JWT_SECRET'].filter((key) => !process.env[key]);
+  if (missing.length) {
+    console.warn(
+      `Admin auth disabled — missing in server/.env: ${missing.join(', ')}. ` +
+        'Copy server/.env.example to server/.env and restart the server.'
+    );
+  }
+}
+warnIfAuthNotConfigured();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +41,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ success: true, message: 'OutbreakIQ API is running' });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/outbreaks', outbreakRoutes);
 app.use('/api/ai', aiRoutes);
 
