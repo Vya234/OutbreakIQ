@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Mic, MicOff, Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,7 +9,7 @@ import { aiApi } from '@/services/api';
 import { useOutbreaks } from '@/context/OutbreakContext';
 import { cn } from '@/lib/utils';
 
-const SUGGESTIONS = [
+const DEFAULT_SUGGESTIONS = [
   'What are the symptoms of dengue?',
   'Which regions are high risk?',
   'How can malaria be prevented?',
@@ -31,6 +31,26 @@ export function AssistantPage() {
   const [listening, setListening] = useState(false);
   const bottomRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const selectedOutbreak = useMemo(
+    () => outbreaks.find((o) => o._id === outbreakId) ?? null,
+    [outbreaks, outbreakId]
+  );
+
+  const suggestedQuestions = useMemo(() => {
+    if (!selectedOutbreak) {
+      return DEFAULT_SUGGESTIONS;
+    }
+
+    const { disease, location } = selectedOutbreak;
+
+    return [
+      `What are the symptoms of ${disease}?`,
+      `How can ${disease} be prevented?`,
+      `Summarize the ${disease} outbreak in ${location}`,
+      `What is the risk level in ${location}?`,
+    ];
+  }, [selectedOutbreak]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -118,7 +138,7 @@ export function AssistantPage() {
         </CardHeader>
         <CardContent>
           <div className="mb-3 flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s) => (
+            {suggestedQuestions.map((s) => (
               <button
                 key={s}
                 type="button"
