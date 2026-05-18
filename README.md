@@ -319,26 +319,29 @@ npm run dev
 
 ---
 
-# OutbreakIQ
-
-![OutbreakIQ Home](screenshots/home.png)
-
-## Features
-...
-
 ## Screenshots
 
+### Home Page
+![OutbreakIQ Home](screenshot/home.png)
+
+<details>
+<summary><strong> View More Screenshots</strong></summary>
+
+<br>
+
 ### Interactive Disease Map
-![Map](screenshots/map.png)
+![Map](screenshot/map.png)
 
 ### Analytics Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshot/dashboard.png)
 
 ### Gemma AI Assistant
-![AI Assistant](screenshots/ai-chat.png)
+![AI Assistant](screenshot/ai-chat.png)
 
 ### Admin Dashboard
-![Admin Dashboard](screenshots/admin-dashboard.png)
+![Admin Dashboard](screenshot/admin-dashboard.png)
+
+</details>
 
 ---
 
